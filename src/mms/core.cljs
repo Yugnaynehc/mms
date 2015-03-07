@@ -1,10 +1,9 @@
 (ns ^:figwheel-always mms.core
     (:require
-              [reagent.core :as reagent :refer [atom]]))
+     [reagent.core :as reagent :refer [atom]]
+     [jayq.core :as jq :refer [$]]))
 
 (enable-console-print!)
-
-(println "Edits to this text should show up in your developer console.")
 
 ;; define your app data so that it doesn't get over-written on reload
 
@@ -12,6 +11,8 @@
 
 (defn hello-world []
   [:h1 (:text @app-state)])
+
+
 
 (reagent/render-component [hello-world]
                           (. js/document (getElementById "app")))
