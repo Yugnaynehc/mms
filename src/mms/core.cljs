@@ -16,6 +16,8 @@
 (def process-queue (atom (sorted-map)))
 (def process-counter (atom 0))
 
+(def table-layout {:foo [1 2 3] :bar "baz"})
+
 (defn hello-world []
   [:h1 (:text @app-state)])
 
