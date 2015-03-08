@@ -30,6 +30,24 @@
 (defn hello-world []
   [:h1 (:text @app-state)])
 
+(defn update-free-table
+  "更新空闲分区表"
+  [])
+
+(defn add-process
+  "将新产生的进程加入进程队列。
+  需要提供的参数是内存大小：size，
+  以及生命周期：life"
+  []
+  (let [size (.-value ($ :#processSize))
+        _ (println size)
+        life (.-value ($ :#processLife))
+        _ (println life)] 
+    (if-not (or (nil? size) (nil? life))
+      (let [id (swap! process-counter inc)]
+        (swap! process-queue assoc
+               id {:id id :size size :life life})))))
+
 (defn table-item
   "空闲分区表的表项"
   []
@@ -82,40 +100,22 @@
   (reagent/create-class {:render free-table-view
                          :component-did-mount free-table-did-mount}))
 
-(defn add-process
-  "将新产生的进程加入进程队列。
-  需要提供的参数是内存大小：size，
-  以及生命周期：life"
-  [{:keys [size life]}]
-  (let [id (swap! process-counter inc)]
-    (swap! process-queue assoc
-           id {:id id :size size :life life})))
-
-(defn update-free-table
-  "更新空闲分区表"
-  [])
-
 
 (defn add-process-modal
   "添加进程时弹出的窗口控件，
   用来设置新增进程的参数"
   []
-  [:div {:class "modal fade" :id "addProcessModal"
+  [:div {:id "addProcessModal"
+         :style {:display "none"}
          :title "添加新的进程"}
-   [:div.modal-dialog
-    [:div.modal-content
-     [:div.modal-header
-      [:button {:type "button" :class "close"
-                :data-dismiss "modal" :aria-label "Close"}
-       [:span {:aria-hidden true}
-        "&times;"]]
-      [:h4.modal-title "Modal title"]]
-     [:div.modal-body
-      [:p "One find body&hellip;"]]
-     [:div.modal-footer
-      [:button {:type "button" :class "btn btn-default"
-                :data-dismiss "modal"} "Close"]
-      [:button {:type "button" :class "btn btn-primary"} "Save changes"]]]]])
+   [:p "设置添加新进程所需的参数"]
+   [:form
+    [:div.form-group
+     [:label "进程大小:"]
+     [:input {:class "form-control" :id "processSize"}]]
+    [:div.form-group
+     [:label "生命周期："]
+     [:input {:class "form-control" :id "processLife"}]]]])
 
 (defn process-queue-view
   "进程队列的视图，以表格形式展现。
@@ -147,9 +147,12 @@
                     #js {:modal true
                          :buttons
                          #js {:cancel (fn []
-                                    (this-as t
-                                             (.dialog ($ t) "close")))
-                              :create (fn [])}})))
+                                        (this-as t
+                                                 (.dialog ($ t) "close")))
+                              :create (fn []
+                                        (this-as t
+                                                 (add-process)
+                                                 (.dialog ($ t) "close")))}})))
 
 (defn process-queue-component
   "创建进程队列控件"
@@ -165,15 +168,15 @@
    [:div.row
     [:div.col-md-3
      [free-table-component]
-     [process-queue-component]
-     [add-process-modal]]
+     [process-queue-component]]
     [:div.col-md-9
      [:h1 "这里放模型"]]]])
 
 (defn app-did-component
   "当应用挂载到网页上时，加载一些设置"
   []
-  (.tooltip ($ "[data-toggle=\"tooltip\"]") #js {:track true}))
+  (.tooltip ($ "[data-toggle=\"tooltip\"]") #js {:track true})
+  )
 
 (defn app
   "完整的应用"
