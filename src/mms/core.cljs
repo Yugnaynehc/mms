@@ -17,6 +17,7 @@
 (def process-counter (atom 0))
 
 (def table-layout {:foo [1 2 3] :bar "baz"})
+(def table-item-layout )
 
 (defn hello-world []
   [:h1 (:text @app-state)])
@@ -68,7 +69,10 @@
     [:div.col-md-9
      [process-queue-component]]]])
 
-(reagent/render-component [app]
+(defn testco []
+  [edn->hiccup table-layout])
+
+(reagent/render-component [testco]
                           (. js/document (getElementById "app")))
 
 
