@@ -142,17 +142,7 @@
   "当进程队列控件成功挂载时，
   为它添加一些jQuery UI元素"
   []
-  (.click ($ :#addProcess)
-          #(.dialog ($ :#addProcessModal)
-                    #js {:modal true
-                         :buttons
-                         #js {:cancel (fn []
-                                        (this-as t
-                                                 (.dialog ($ t) "close")))
-                              :create (fn []
-                                        (this-as t
-                                                 (add-process)
-                                                 (.dialog ($ t) "close")))}})))
+  )
 
 (defn process-queue-component
   "创建进程队列控件"
