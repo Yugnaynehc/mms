@@ -30,14 +30,26 @@
 (defn hello-world []
   [:h1 (:text @app-state)])
 
-(defn tablie-item
+(defn table-item
   "空闲分区表的表项"
   []
   (let [editing (atom false)]
-    (fn [{:keys {start end}}]
-      [:li {:class (str (if @editing "editing"))}
-       [:div.view
-        [:label ]]])))
+    (fn [{:keys [id start end]}]
+      [:tr
+       [:td id]
+       [:td start]
+       [:td end
+        [:button.destory]]])))
+
+(defn queue-item
+  "进程队列的表项"
+  []
+  (let [editing (atom false)]
+    (fn [{:keys [id size life]}]
+      [:tr
+       [:td id]
+       [:td size]
+       [:td life]])))
 
 (defn free-table-component
   "空闲分区表的显示控件，以表格形式展现。
@@ -51,12 +63,8 @@
      [:th "起始"]
      [:th "结束"]]]
    [:tbody
-    (for [item @free-table]
-      (let [{:keys [id start end]} (second item)]
-        [:tr
-         [:td id]
-         [:td start]
-         [:td end]]))]])
+    (for [item (vals @free-table)]
+      ^{:key (:id item)} [table-item item])]])
 
 (defn add-process
   "将新产生的进程加入进程队列。
@@ -85,12 +93,8 @@
      [:th "大小"]
      [:th "生命"]]]
    [:tbody
-    (for [item @process-queue]
-      (let [{:keys [id size life]} (second item)]
-        [:tr
-         [:td id]
-         [:td size]
-         [:td life]]))]])
+    (for [item (vals @process-queue)]
+      ^{:key (:id item)} [queue-item item])]])
 
 (defn app
   "这是整个应用的主界面，其它的部件都要挂载到此处"
