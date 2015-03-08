@@ -1,7 +1,7 @@
 (ns ^:figwheel-always mms.core
     (:require
      [reagent.core :as reagent :refer [atom]]
-     [json-html :refer [edn->hiccup]]
+     [json-html.core :refer [edn->hiccup]]
      [jayq.core :as jq :refer [$]]))
 
 (enable-console-print!)
@@ -16,8 +16,16 @@
 (def process-queue (atom (sorted-map)))
 (def process-counter (atom 0))
 
-(def table-layout {:foo [1 2 3] :bar "baz"})
-(def table-item-layout )
+
+(swap! free-table assoc
+       1 {:id 1 :start 1 :end 100}
+       2 {:id 2 :start 101 :end 200})
+(swap! process-queue assoc
+       1 {:id 1 :size 100 :life 10}
+       2 {:id 2 :size 200 :life 5})
+
+(def table-layout [[1 2] [3 4]])
+(def table-item-layout nil)
 
 (defn hello-world []
   [:h1 (:text @app-state)])
@@ -35,7 +43,20 @@
   "空闲分区表的显示控件，以表格形式展现。
   暂时不可编辑。"
   []
-  [:p "this is a table"])
+  [:table {:class "table table-hover"}
+   [:caption "空闲分区表"]
+   [:thead
+    [:tr
+     [:th "序号"]
+     [:th "起始"]
+     [:th "结束"]]]
+   [:tbody
+    (for [item @free-table]
+      (let [{:keys [id start end]} (second item)]
+        [:tr
+         [:td id]
+         [:td start]
+         [:td end]]))]])
 
 (defn add-process
   "将新产生的进程加入进程队列。
@@ -52,11 +73,24 @@
 
 (defn process-queue-component
   "进程队列的显示控件，以表格形式展现。
-   需要实现增加进程，删除进程功能。
-   增加进程时，需要设定的参数有：
+  需要实现增加进程，删除进程功能。
+  增加进程时，需要设定的参数有：
   进程占用内存大小，进程生命周期"
   []
-  [:p "this is a list"])
+  [:table {:class "table table-hover"}
+   [:caption "进程队列"]
+   [:thead
+    [:tr
+     [:th "序号"]
+     [:th "大小"]
+     [:th "生命"]]]
+   [:tbody
+    (for [item @process-queue]
+      (let [{:keys [id size life]} (second item)]
+        [:tr
+         [:td id]
+         [:td size]
+         [:td life]]))]])
 
 (defn app
   "这是整个应用的主界面，其它的部件都要挂载到此处"
@@ -65,14 +99,17 @@
   [:div.container
    [:div.row
     [:div.col-md-3
-     [free-table-component]]
+     [free-table-component]
+     [process-queue-component]]
     [:div.col-md-9
-     [process-queue-component]]]])
+     [:h1 "这里放模型"]]]])
 
-(defn testco []
-  [edn->hiccup table-layout])
+#_(defn app []
+    [:div.col-md-5
+     [edn->hiccup table-layout]])
 
-(reagent/render-component [testco]
+
+(reagent/render-component [app]
                           (. js/document (getElementById "app")))
 
 
