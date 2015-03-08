@@ -39,7 +39,7 @@
        [:td id]
        [:td start]
        [:td end
-        [:button.destory]]])))
+        [:span.destroy]]])))
 
 (defn queue-item
   "进程队列的表项"
@@ -49,14 +49,18 @@
       [:tr
        [:td id]
        [:td size]
-       [:td life]])))
+       [:td life
+        [:span.destroy]]])))
 
-(defn free-table-component
-  "空闲分区表的显示控件，以表格形式展现。
-  暂时不可编辑。"
+(defn free-table-view
+  "空闲分区表的视图定义,以表格形式展现,
+   内容暂时不可编辑。"
   []
   [:table {:class "table table-hover"}
-   [:caption "空闲分区表"]
+   [:caption "空闲分区表"
+    [:span {:class "glyphicon glyphicon-plus"
+            :data-toggle "tooltip"
+            :title "添加一个新分区"}]]
    [:thead
     [:tr
      [:th "序号"]
@@ -65,6 +69,18 @@
    [:tbody
     (for [item (vals @free-table)]
       ^{:key (:id item)} [table-item item])]])
+
+(defn free-table-did-mount
+  "当空闲分区表控件成功挂载时，
+  为它添加一些jQueryUI元素"
+  []
+  )
+
+(defn free-table-component
+  "创建空闲分区表控件。"
+  []
+  (reagent/create-class {:render free-table-view
+                         :component-did-mount free-table-did-mount}))
 
 (defn add-process
   "将新产生的进程加入进程队列。
@@ -79,14 +95,40 @@
   "更新空闲分区表"
   [])
 
-(defn process-queue-component
-  "进程队列的显示控件，以表格形式展现。
+
+(defn add-process-modal
+  "添加进程时弹出的窗口控件，
+  用来设置新增进程的参数"
+  []
+  [:div {:class "modal fade" :id "addProcessModal"
+         :title "添加新的进程"}
+   [:div.modal-dialog
+    [:div.modal-content
+     [:div.modal-header
+      [:button {:type "button" :class "close"
+                :data-dismiss "modal" :aria-label "Close"}
+       [:span {:aria-hidden true}
+        "&times;"]]
+      [:h4.modal-title "Modal title"]]
+     [:div.modal-body
+      [:p "One find body&hellip;"]]
+     [:div.modal-footer
+      [:button {:type "button" :class "btn btn-default"
+                :data-dismiss "modal"} "Close"]
+      [:button {:type "button" :class "btn btn-primary"} "Save changes"]]]]])
+
+(defn process-queue-view
+  "进程队列的视图，以表格形式展现。
   需要实现增加进程，删除进程功能。
   增加进程时，需要设定的参数有：
   进程占用内存大小，进程生命周期"
   []
   [:table {:class "table table-hover"}
-   [:caption "进程队列"]
+   [:caption "进程队列"
+    [:span {:class "glyphicon glyphicon-plus"
+            :id "addProcess"
+            :data-toggle "tooltip"
+            :title "添加进程"}]]
    [:thead
     [:tr
      [:th "序号"]
@@ -96,7 +138,26 @@
     (for [item (vals @process-queue)]
       ^{:key (:id item)} [queue-item item])]])
 
-(defn app
+(defn process-queue-did-mount
+  "当进程队列控件成功挂载时，
+  为它添加一些jQuery UI元素"
+  []
+  (.click ($ :#addProcess)
+          #(.dialog ($ :#addProcessModal)
+                    #js {:modal true
+                         :buttons
+                         #js {:cancel (fn []
+                                    (this-as t
+                                             (.dialog ($ t) "close")))
+                              :create (fn [])}})))
+
+(defn process-queue-component
+  "创建进程队列控件"
+  []
+  (reagent/create-class {:render process-queue-view
+                         :component-did-mount process-queue-did-mount}))
+
+(defn app-view
   "这是整个应用的主界面，其它的部件都要挂载到此处"
   []
   [:h1 "main"]
@@ -104,13 +165,21 @@
    [:div.row
     [:div.col-md-3
      [free-table-component]
-     [process-queue-component]]
+     [process-queue-component]
+     [add-process-modal]]
     [:div.col-md-9
      [:h1 "这里放模型"]]]])
 
-#_(defn app []
-    [:div.col-md-5
-     [edn->hiccup table-layout]])
+(defn app-did-component
+  "当应用挂载到网页上时，加载一些设置"
+  []
+  (.tooltip ($ "[data-toggle=\"tooltip\"]") #js {:track true}))
+
+(defn app
+  "完整的应用"
+  []
+  (reagent/create-class {:render app-view
+                         :component-did-mount app-did-component}))
 
 
 (reagent/render-component [app]
