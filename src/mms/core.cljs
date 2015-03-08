@@ -1,7 +1,7 @@
 (ns ^:figwheel-always mms.core
     (:require
      [reagent.core :as reagent :refer [atom]]
-     [json-html.core :refer [edn->hiccup]]
+     [reagent-modals.modals :as reagent-modals]
      [jayq.core :as jq :refer [$]]))
 
 (enable-console-print!)
@@ -10,11 +10,11 @@
 
 (defonce app-state (atom {:text "Hello world!"}))
 
-(def free-table (atom (sorted-map)))
-(def index-counter (atom 0))
+(defonce free-table (atom (sorted-map)))
+(defonce index-counter (atom 0))
 
-(def process-queue (atom (sorted-map)))
-(def process-counter (atom 0))
+(defonce process-queue (atom (sorted-map)))
+(defonce process-counter (atom 0))
 
 
 (swap! free-table assoc
@@ -23,6 +23,8 @@
 (swap! process-queue assoc
        1 {:id 1 :size 100 :life 10}
        2 {:id 2 :size 200 :life 5})
+(swap! process-counter inc)
+(swap! process-counter inc)
 
 (def table-layout [[1 2] [3 4]])
 (def table-item-layout nil)
@@ -38,37 +40,43 @@
   "将新产生的进程加入进程队列。
   需要提供的参数是内存大小：size，
   以及生命周期：life"
-  []
-  (let [size (.-value ($ :#processSize))
-        _ (println size)
-        life (.-value ($ :#processLife))
-        _ (println life)] 
-    (if-not (or (nil? size) (nil? life))
-      (let [id (swap! process-counter inc)]
-        (swap! process-queue assoc
-               id {:id id :size size :life life})))))
+  [size life]
+  (if-not (or (= "" size) (= "" life))
+    (let [id (swap! process-counter inc)]
+      (swap! process-queue assoc
+             id {:id id :size size :life life}))))
+
+(defn delete-process
+  ""
+  [id]
+  (swap! process-queue dissoc id))
+
+(defn delete-section
+  ""
+  [id]
+  (swap! free-table dissoc id))
 
 (defn table-item
   "空闲分区表的表项"
   []
   (let [editing (atom false)]
-    (fn [{:keys [id start end]}]
+    (fn [index {:keys [id start end]}]
       [:tr
-       [:td id]
+       [:td index]
        [:td start]
        [:td end
-        [:span.destroy]]])))
+        [:span.destroy {:on-click #(delete-section id)}]]])))
 
 (defn queue-item
   "进程队列的表项"
   []
   (let [editing (atom false)]
-    (fn [{:keys [id size life]}]
+    (fn [index {:keys [id size life]}]
       [:tr
-       [:td id]
+       [:td index]
        [:td size]
        [:td life
-        [:span.destroy]]])))
+        [:span.destroy {:on-click #(delete-process id)}]]])))
 
 (defn free-table-view
   "空闲分区表的视图定义,以表格形式展现,
@@ -85,8 +93,11 @@
      [:th "起始"]
      [:th "结束"]]]
    [:tbody
-    (for [item (vals @free-table)]
-      ^{:key (:id item)} [table-item item])]])
+    (let [index (atom 0)]
+      (for [item (vals @free-table)]
+        (do
+         (swap! index inc)
+         ^{:key (:id item)} [table-item @index item])))]])
 
 (defn free-table-did-mount
   "当空闲分区表控件成功挂载时，
@@ -105,17 +116,29 @@
   "添加进程时弹出的窗口控件，
   用来设置新增进程的参数"
   []
-  [:div {:id "addProcessModal"
-         :style {:display "none"}
-         :title "添加新的进程"}
-   [:p "设置添加新进程所需的参数"]
-   [:form
+  [:div.modal-content
+   [:div.modal-header
+    [:button {:type "button" :class "close"
+              :data-dismiss "modal" :aria-label "Close"}
+     [:span {:aria-hidden true} "×"]]
+    [:h4.modal-title "添加新进程"]]
+   [:div.modal-body
+    [:p "设置新进程的参数"]
+    [:form
     [:div.form-group
      [:label "进程大小:"]
-     [:input {:class "form-control" :id "processSize"}]]
+     [:input {:type "text" :class "form-control" :id "processSize"}]]
     [:div.form-group
      [:label "生命周期："]
-     [:input {:class "form-control" :id "processLife"}]]]])
+     [:input {:type "text" :class "form-control" :id "processLife"}]]]]
+   [:div.modal-footer
+    [:button {:type "button" :class "btn btn-default"
+              :data-dismiss "modal"} "关闭"]
+    [:button {:type "button" :class "btn btn-primary"
+              :on-click #(do
+                           (add-process (.-value (first ($ :#processSize)))
+                                        (.-value (first ($ :#processLife))))
+                           (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
 
 (defn process-queue-view
   "进程队列的视图，以表格形式展现。
@@ -135,14 +158,18 @@
      [:th "大小"]
      [:th "生命"]]]
    [:tbody
-    (for [item (vals @process-queue)]
-      ^{:key (:id item)} [queue-item item])]])
+    (let [index (atom 0)]
+      (for [item (vals @process-queue)]
+        (do
+         (swap! index inc)
+         ^{:key (:id item)} [queue-item @index item])))]])
 
 (defn process-queue-did-mount
   "当进程队列控件成功挂载时，
   为它添加一些jQuery UI元素"
   []
-  )
+  (.click ($ :#addProcess)
+          #(reagent-modals/modal! [add-process-modal] {:size :sm})))
 
 (defn process-queue-component
   "创建进程队列控件"
@@ -157,6 +184,7 @@
   [:div.container
    [:div.row
     [:div.col-md-3
+     [reagent-modals/modal-window]
      [free-table-component]
      [process-queue-component]]
     [:div.col-md-9
