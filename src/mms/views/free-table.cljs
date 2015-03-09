@@ -12,8 +12,8 @@
   "添加新分区的表单参数"
   {:title "添加新分区"
    :description "设置新空闲分区的参数"
-   :items [{:label "分区起始:" :id "sectionStart"}
-           {:label "分区结束:" :id "sectionEnd"}]
+   :items [{:label "分区起始" :id "sectionStart"}
+           {:label "分区结束" :id "sectionEnd"}]
    :create-on-click c/add-section})
 
 (defn add-section-modal-component

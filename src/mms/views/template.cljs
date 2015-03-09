@@ -9,13 +9,13 @@
   "带表单的模态窗口控件模板"
   [props]
   [:div.modal-content
-   [:div.modal-header
+   [:div {:class "modal-header bg-info"}
     [:button {:type "button" :class "close"
               :data-dismiss "modal" :aria-label "Close"}
      [:span {:aria-hidden true} "×"]]
     [:h4.modal-title (:title props)]]
    [:div.modal-body
-    [:p (:description props)]
+    [:h4 (:description props)]
     [:form
      (for [item (:items props)
            :let [{:keys [label id]} item]]
@@ -31,7 +31,6 @@
                           (apply (:create-on-click props)
                                  (map #(.-value %) ($ :input)))
                           (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
-
 
 (defn table-component
   "动态表格控件模板"
@@ -51,10 +50,12 @@
        [:tr
         (for [col (:col props)]
           ^{:key (:id col)} [:th (:text col)])
-        [:th [:span]]]]
+        [:th {:style {:width "5%" :padding-left "0px"}}
+         [:span.destroy {:style {:visibility "hide"}}]]]]
       [:tbody
        (let [index (atom 0)]
          (doall (for [item items]
                   (do
                     (swap! index inc)
-                    ^{:key (:id item)} [(:item-component props) @index item]))))]]]))
+                    ^{:key (:id item)} [(:item-component props)
+                                        @index item]))))]]]))

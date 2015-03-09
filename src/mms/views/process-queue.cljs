@@ -13,8 +13,8 @@
   {:title "添加新进程"
    :button-id "processQueue"
    :description "设置新进程的参数"
-   :items [{:label "进程大小:" :id "processSize"}
-           {:label "生命周期:" :id "processLife"}]
+   :items [{:label "进程大小" :id "processSize"}
+           {:label "生命周期" :id "processLife"}]
    :create-on-click c/add-process})
 
 (defn add-process-modal-component
