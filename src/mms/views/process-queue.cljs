@@ -4,7 +4,7 @@
    [reagent-modals.modals :as reagent-modals]
    [mms.util :as u]
    [jayq.core :as jq :refer [$]]
-   [mms.controler.process-queue :as c]
+   [mms.controlers.process-queue :as c]
    [mms.views.template :as t]))
 
 (def add-process-setting-props

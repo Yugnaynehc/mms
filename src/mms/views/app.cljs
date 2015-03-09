@@ -4,7 +4,7 @@
    [jayq.core :refer [$]]
    [reagent-modals.modals :as reagent-modals])
   (:use
-   [mms.views.free-table :only [free-table-component]]
+   [mms.views.section-table :only [section-table-component]]
    [mms.views.process-queue :only [process-queue-component]]
    [mms.views.memory-model :only [memory-model-component]]))
 
@@ -15,7 +15,7 @@
    [:div.row
     [:div.col-md-3
      [reagent-modals/modal-window]
-     [free-table-component]
+     [section-table-component]
      [process-queue-component]]
     [:div.col-md-9
      [memory-model-component]]]])

@@ -1,4 +1,4 @@
-(ns mms.controler.process-queue
+(ns mms.controlers.process-queue
   (:require
    [mms.util :as u]
    [mms.models.process-queue :as m]))

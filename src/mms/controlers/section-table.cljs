@@ -1,24 +1,24 @@
-(ns mms.controler.free-table
+(ns mms.controlers.section-table
   (:require
    [jayq.core :refer [$]]
    [mms.util :as u]
-   [mms.models.free-table :as m]))
+   [mms.models.section-table :as m]))
 
-(defn get-free-table
-  "返回free-table解引用后的值"
+(defn get-section-table
+  "返回section-table解引用后的值"
   []
-  (deref m/free-table))
+  (deref m/section-table))
 
-(defn update-free-table
-  "更新空闲分区表"
+(defn update-section-table
+  "更新分区表"
   [])
 
 (defn add-section
-  "将新产生的空闲分区加入空闲分区表"
+  "将新产生的空闲分区加入分区表"
   [start end]
   (if (u/validate-string-num start end)
     (let [id (swap! m/section-counter inc)]
-      (swap! m/free-table assoc
+      (swap! m/section-table assoc
              id {:id id :start start :end end})
       (.html ($ :#model)
              (str "<h1>我现在有空间啦~~！ " (- end start) "MB哟~~</h1>")))))
@@ -26,4 +26,4 @@
 (defn delete-section
   "删除一个分区"
   [id]
-  (swap! m/free-table dissoc id))
+  (swap! m/section-table dissoc id))

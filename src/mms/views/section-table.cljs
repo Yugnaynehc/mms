@@ -1,10 +1,10 @@
-(ns mms.views.free-table
+(ns mms.views.section-table
   (:require
      [reagent.core :as reagent :refer [atom]]
      [jayq.core :as jq :refer [$]]
      [reagent-modals.modals :as reagent-modals]
      [mms.util :as u]
-     [mms.controler.free-table :as c]
+     [mms.controlers.section-table :as c]
      [mms.views.template :as t]))
 
 
@@ -39,8 +39,8 @@
                                            "none")}}]]])))
 
 (def table-view-setting-props
-  "构造空闲分区表显示控件的参数"
-  {:title "空闲分区表"
+  "构造分区表显示控件的参数"
+  {:title "分区表"
    :button-id "freeTable"
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
    :tip "添加一个新分区"
@@ -48,23 +48,23 @@
    :col [{:id 1 :text "序号"}
          {:id 2 :text "起始"}
          {:id 3 :text "结束"}]
-   :values c/get-free-table 
+   :values c/get-section-table 
    :item-component table-item})
 
-(defn free-table-view
-  "空闲分区表的视图定义,以表格形式展现,
+(defn section-table-view
+  "分区表的视图定义,以表格形式展现,
   内容暂时不可编辑。"
   []
   [t/table-component table-view-setting-props])
 
-(defn free-table-did-mount
-  "当空闲分区表控件成功挂载时，
+(defn section-table-did-mount
+  "当分区表控件成功挂载时，
   为它添加一些jQueryUI元素"
   []
   )
 
-(defn free-table-component
+(defn section-table-component
   "创建空闲分区表控件。"
   []
-  (reagent/create-class {:render free-table-view
-                         :component-did-mount free-table-did-mount}))
+  (reagent/create-class {:render section-table-view
+                         :component-did-mount section-table-did-mount}))
