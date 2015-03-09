@@ -12,22 +12,24 @@
 (defonce app-state (atom {:text "Hello world!"}))
 
 (defonce free-table (atom (sorted-map)))
-(defonce index-counter (atom 0))
+(defonce section-counter (atom 0))
+(defonce section-addable (atom true))
 
 (defonce process-queue (atom (sorted-map)))
 (defonce process-counter (atom 0))
+(defonce process-addable (atom true))
 
-(swap! free-table assoc
-       1 {:id 1 :start 1 :end 100}
-       2 {:id 2 :start 101 :end 200})
-(swap! process-queue assoc
-       1 {:id 1 :size 100 :life 10}
-       2 {:id 2 :size 200 :life 5})
-(swap! process-counter inc)
-(swap! process-counter inc)
+;; (swap! free-table assoc
+;;        1 {:id 1 :start 1 :end 100}
+;;        2 {:id 2 :start 101 :end 200})
+;; (swap! section-counter inc)
+;; (swap! section-counter inc)
 
-(def table-layout [[1 2] [3 4]])
-(def table-item-layout nil)
+;; (swap! process-queue assoc
+;;        1 {:id 1 :size 100 :life 10}
+;;        2 {:id 2 :size 200 :life 5})
+;; (swap! process-counter inc)
+;; (swap! process-counter inc)
 
 (defn hello-world []
   [:h1 (:text @app-state)])
@@ -35,6 +37,58 @@
 (defn update-free-table
   "更新空闲分区表"
   [])
+
+(defn add-modal
+  "带表单的模态窗口控件模板"
+  [props]
+  [:div.modal-content
+   [:div.modal-header
+    [:button {:type "button" :class "close"
+              :data-dismiss "modal" :aria-label "Close"}
+     [:span {:aria-hidden true} "×"]]
+    [:h4.modal-title (:title props)]]
+   [:div.modal-body
+    [:p (:description props)]
+    [:form
+     (for [item (:items props)
+           :let [{:keys [label id]} item]]
+       ^{:key id}
+       [:div.form-group
+        [:label label]
+        [:input {:type "text" :class "form-control" :id id}]])]]
+   [:div.modal-footer
+    [:button {:type "button" :class "btn btn-default"
+              :data-dismiss "modal"} "关闭"]
+    [:button {:type "button" :class "btn btn-primary"
+              :on-click (fn []
+                           (apply (:create-on-click props)
+                                  (map #(.-value %) ($ :input)))
+                           (.modal ($ :#reagent-modal) "hide"))}
+     "保存"]]])
+
+(defn add-section
+  "将新产生的空闲分区加入空闲分区表"
+  [start end]
+  (if (util/validate-string-num start end)
+    (let [id (swap! section-counter inc)]
+      (swap! free-table assoc
+             id {:id id :start start :end end})
+      (.html ($ :#model)
+             (str "我现在有空间啦~~！ " (- end start) "MB哟~~")))))
+
+(def add-section-setting-props
+  "添加新分区的表单参数"
+  {:title "添加新分区"
+   :description "设置新空闲分区的参数"
+   :items [{:label "分区起始:" :id "sectionStart"}
+           {:label "分区结束:" :id "sectionEnd"}]
+   :create-on-click add-section})
+
+(defn add-section-modal
+  "添加分区的模态窗口控件，
+  用来设置新增分区的参数"
+  []
+  [add-modal add-section-setting-props])
 
 (defn add-process
   "将新产生的进程加入进程队列。
@@ -46,41 +100,27 @@
       (swap! process-queue assoc
              id {:id id :size size :life life}))))
 
+(def add-process-setting-props
+  "添加新进程的表单参数"
+  {:title "添加新进程"
+   :description "设置新进程的参数"
+   :items [{:label "进程大小:" :id "processSize"}
+           {:label "生命周期:" :id "processLife"}]
+   :create-on-click add-process})
+
 (defn add-process-modal
-  "添加进程时弹出的窗口控件，
+  "添加进程的模态窗口控件，
   用来设置新增进程的参数"
   []
-  [:div.modal-content
-   [:div.modal-header
-    [:button {:type "button" :class "close"
-              :data-dismiss "modal" :aria-label "Close"}
-     [:span {:aria-hidden true} "×"]]
-    [:h4.modal-title "添加新进程"]]
-   [:div.modal-body
-    [:p "设置新进程的参数"]
-    [:form
-    [:div.form-group
-     [:label "进程大小:"]
-     [:input {:type "text" :class "form-control" :id "processSize"}]]
-    [:div.form-group
-     [:label "生命周期："]
-     [:input {:type "text" :class "form-control" :id "processLife"}]]]]
-   [:div.modal-footer
-    [:button {:type "button" :class "btn btn-default"
-              :data-dismiss "modal"} "关闭"]
-    [:button {:type "button" :class "btn btn-primary"
-              :on-click #(do
-                           (add-process (.-value (first ($ :#processSize)))
-                                        (.-value (first ($ :#processLife))))
-                           (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
+  [add-modal add-process-setting-props])
 
 (defn delete-process
-  ""
+  "删除一个进程"
   [id]
   (swap! process-queue dissoc id))
 
 (defn delete-section
-  ""
+  "删除一个分区"
   [id]
   (swap! free-table dissoc id))
 
@@ -113,6 +153,7 @@
   [:table {:class "table table-hover"}
    [:caption "空闲分区表"
     [:span {:class "glyphicon glyphicon-plus"
+            :id "addSection"
             :data-toggle "tooltip"
             :title "添加一个新分区"}]]
    [:thead
@@ -131,7 +172,8 @@
   "当空闲分区表控件成功挂载时，
   为它添加一些jQueryUI元素"
   []
-  )
+  (.click ($ :#addSection)
+          #(reagent-modals/modal! [add-section-modal] {:size :sm})))
 
 (defn free-table-component
   "创建空闲分区表控件。"
@@ -177,6 +219,22 @@
   (reagent/create-class {:render process-queue-view
                          :component-did-mount process-queue-did-mount}))
 
+(defn memory-model-view
+  ""
+  []
+  [:div#model
+   [:h1 "这里放模型"]])
+
+(defn memory-model-did-mount
+  ""
+  [])
+
+(defn memory-model-component
+  ""
+  []
+  (reagent/create-class {:render memory-model-view
+                         :component-did-mount memory-model-did-mount}))
+
 (defn app-view
   "这是整个应用的主界面，其它的部件都要挂载到此处"
   []
@@ -188,7 +246,7 @@
      [free-table-component]
      [process-queue-component]]
     [:div.col-md-9
-     [:h1 "这里放模型"]]]])
+     [memory-model-component]]]])
 
 (defn app-did-component
   "当应用挂载到网页上时，加载一些设置"

@@ -1,5 +1,10 @@
 /* some style */
 
+body {
+    background-image: url(../img/furley_bg.png);
+}
+
+
 span.destroy {
     float: right;
     visibility: hidden;
