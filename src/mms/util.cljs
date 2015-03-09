@@ -10,3 +10,4 @@
   "检测传入的字符串是否表示数字"
   [& xs]
   (every? string? (map #(re-matches #"^\d+$" %) xs))) 
+
