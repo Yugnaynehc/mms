@@ -4,9 +4,14 @@
    [mms.models.process-queue :as m]))
 
 (defn get-process-queue
-  ""
+  "获得process-queue解引用后的值"
   []
   (deref m/process-queue))
+
+(defn get-process-queue-value
+  "获得process-queue中每一个键值对的值部分"
+  []
+  (vals (deref m/process-queue)))
 
 (defn add-process
   "将新产生的进程加入进程队列。
@@ -16,7 +21,8 @@
   (if (u/validate-string-num size life)
     (let [id (swap! m/process-counter inc)]
       (swap! m/process-queue assoc
-             id {:id id :size size :life life :state false}))))
+             id {:id id :size (js/parseInt size)
+                 :life (js/parseInt life) :state false}))))
 
 (defn delete-process
   "删除一个进程"

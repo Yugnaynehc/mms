@@ -50,7 +50,7 @@
          {:id 2 :text "大小"}
          {:id 3 :text "周期"}
          {:id 4 :text "状态"}]
-   :values c/get-process-queue 
+   :values c/get-process-queue-value
    :item-component queue-item})
 
 (defn process-queue-view

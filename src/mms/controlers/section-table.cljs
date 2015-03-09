@@ -9,6 +9,16 @@
   []
   (deref m/section-table))
 
+(defn get-section-table-value
+  ""
+  []
+  (vals (deref m/section-table)))
+
+(defn get-section-table-sorted-value
+  ""
+  []
+  (sort-by #(:start %) (get-section-table-value)))
+
 (defn update-section-table
   "更新分区表"
   [])
@@ -19,7 +29,8 @@
   (if (u/validate-string-num start end)
     (let [id (swap! m/section-counter inc)]
       (swap! m/section-table assoc
-             id {:id id :start start :end end :state true})
+             id {:id id :start (js/parseInt start)
+                 :end (js/parseInt end) :state true})
       (.html ($ :#model)
              (str "<h1>我现在有空间啦~~！ " (- end start) "MB哟~~</h1>")))))
 

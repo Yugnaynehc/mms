@@ -47,12 +47,12 @@
    :button-id "freeTable"
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
    :tip "添加一个新分区"
-   :addable false
+   :addable true
    :col [{:id 1 :text "序号"}
          {:id 2 :text "起始"}
          {:id 3 :text "结束"}
          {:id 4 :text "状态"}]
-   :values c/get-section-table 
+   :values c/get-section-table-sorted-value 
    :item-component table-item})
 
 (defn section-table-view

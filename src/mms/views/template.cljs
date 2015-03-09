@@ -35,7 +35,7 @@
 (defn table-component
   "动态表格控件模板"
   [props]
-  (let [items (vals (apply (:values props) []))]
+  (let [items (apply (:values props) [])]
     [:div {:class "panel panel-primary" }
      [:div.panel-heading (:title props)
       (if (or (:addable props) (zero? (count items)))
