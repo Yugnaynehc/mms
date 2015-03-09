@@ -48,7 +48,7 @@
    :button-id "freeTable"
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
    :tip "添加一个新分区"
-   :addable false
+   :addable true
    :col [{:id 0 :text "序号"}
          {:id 1 :text "进程"}
          {:id 2 :text "起始"}

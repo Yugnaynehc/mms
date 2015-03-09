@@ -46,5 +46,5 @@
             :end boundary :state false})
     (if (< boundary end)
       (swap! m/section-table assoc
-             new-id {:id new-id :pid pid :start (inc boundary)
+             new-id {:id new-id :pid nil :start (inc boundary)
                      :end end :state true}))))
