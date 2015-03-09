@@ -94,10 +94,10 @@
      [:th "结束"]]]
    [:tbody
     (let [index (atom 0)]
-      (for [item (vals @free-table)]
-        (do
-         (swap! index inc)
-         ^{:key (:id item)} [table-item @index item])))]])
+      (doall (for [item (vals @free-table)]
+               (do
+                 (swap! index inc)
+                 ^{:key (:id item)} [table-item @index item]))))]])
 
 (defn free-table-did-mount
   "当空闲分区表控件成功挂载时，
@@ -159,10 +159,10 @@
      [:th "生命"]]]
    [:tbody
     (let [index (atom 0)]
-      (for [item (vals @process-queue)]
-        (do
-         (swap! index inc)
-         ^{:key (:id item)} [queue-item @index item])))]])
+      (doall (for [item (vals @process-queue)]
+               (do
+                 (swap! index inc)
+                 ^{:key (:id item)} [queue-item @index item]))))]])
 
 (defn process-queue-did-mount
   "当进程队列控件成功挂载时，
