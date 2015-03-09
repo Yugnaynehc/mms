@@ -22,7 +22,7 @@
     (let [id (swap! m/process-counter inc)]
       (swap! m/process-queue assoc
              id {:id id :size (js/parseInt size)
-                 :life (js/parseInt life) :state false}))))
+                 :life (js/parseInt life) :state 0}))))
 
 (defn delete-process
   "删除一个进程"

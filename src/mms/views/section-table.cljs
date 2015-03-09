@@ -34,7 +34,7 @@
        [:td end]
        (if state
          [:td.text-success "空闲"]
-         [:td.text-warning "分配"])
+         [:td.text-primary "分配"])
        [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-section id)
                         :style {:display (if @editing
@@ -47,7 +47,7 @@
    :button-id "freeTable"
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
    :tip "添加一个新分区"
-   :addable true
+   :addable false
    :col [{:id 1 :text "序号"}
          {:id 2 :text "起始"}
          {:id 3 :text "结束"}
