@@ -4,7 +4,7 @@
      [figwheel.client :as fw]))
 
 (fw/start {
-  :websocket-url "ws://192.168.8.8:3449/figwheel-ws"
+  :websocket-url "ws://localhost:3449/figwheel-ws"
   :on-jsload (fn []
                ;; (stop-and-start-my app)
                )})

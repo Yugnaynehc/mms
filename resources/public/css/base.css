@@ -9,6 +9,7 @@ span.destroy {
     float: right;
     visibility: hidden;
     color: #a88a8a;
+    /* margin-right: -3px; */
     /* -webkit-transition: all 0.2s; */
     /* transition: all 0.2s; */
 }

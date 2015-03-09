@@ -31,14 +31,17 @@
       [:tr
        [:td index]
        [:td start]
-       [:td end
+       [:td end]
+       [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-section id)}]]])))
 
 (def table-view-setting-props
   "构造空闲分区表显示控件的参数"
   {:title "空闲分区表"
+   :button-id "freeTable"
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
    :tip "添加一个新分区"
+   :addable false
    :col [{:id 1 :text "序号"}
          {:id 2 :text "起始"}
          {:id 3 :text "结束"}]

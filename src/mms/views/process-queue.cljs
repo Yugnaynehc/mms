@@ -11,6 +11,7 @@
 (def add-process-setting-props
   "添加新进程的表单参数"
   {:title "添加新进程"
+   :button-id "processQueue"
    :description "设置新进程的参数"
    :items [{:label "进程大小:" :id "processSize"}
            {:label "生命周期:" :id "processLife"}]
@@ -30,7 +31,8 @@
       [:tr
        [:td index]
        [:td size]
-       [:td life
+       [:td life]
+       [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-process id)}]]])))
 
 (def process-queue-setting-props
@@ -38,6 +40,7 @@
   {:title "进程队列"
    :on-click #(reagent-modals/modal! [add-process-modal-component] {:size :sm})
    :tip "添加进程"
+   :addable true
    :col [{:id 1 :text "序号"}
          {:id 2 :text "大小"}
          {:id 3 :text "周期"}]

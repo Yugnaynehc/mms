@@ -28,30 +28,33 @@
               :data-dismiss "modal"} "关闭"]
     [:button {:type "button" :class "btn btn-primary"
               :on-click (fn []
-                           (apply (:create-on-click props)
-                                  (map #(.-value %) ($ :input)))
-                           (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
+                          (apply (:create-on-click props)
+                                 (map #(.-value %) ($ :input)))
+                          (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
 
 
 (defn table-component
   "动态表格控件模板"
   [props]
-  [:div {:class "panel panel-primary"}
-   [:div.panel-heading (:title props)
-    [:span {:class "glyphicon glyphicon-plus"
-            :id "addSection"
-            :on-click (:on-click props)
-            :data-toggle "tooltip"
-            :title (:tip props)}]]
-   #_[:div.panel-body]
-   [:table {:class "panel table table-hover"}
-    [:thead
-     [:tr
-      (for [col (:col props)]
-        ^{:key (:id col)} [:th (:text col)])]]
-    [:tbody
-     (let [index (atom 0)]
-       (doall (for [item (vals (apply (:values props) []))]
-                (do
-                  (swap! index inc)
-                  ^{:key (:id item)} [(:item-component props) @index item]))))]]])
+  (let [items (vals (apply (:values props) []))]
+    [:div {:class "panel panel-primary" }
+     [:div.panel-heading (:title props)
+      (if (or (:addable props) (zero? (count items)))
+        [:span {:class "glyphicon glyphicon-plus"
+                :id (:button-id props)
+                :on-click (:on-click props)
+                :data-toggle "tooltip"
+                :title (:tip props)}])]
+     #_[:div.panel-body]
+     [:table {:class "panel table table-hover"}
+      [:thead
+       [:tr
+        (for [col (:col props)]
+          ^{:key (:id col)} [:th (:text col)])
+        [:th [:span]]]]
+      [:tbody
+       (let [index (atom 0)]
+         (doall (for [item items]
+                  (do
+                    (swap! index inc)
+                    ^{:key (:id item)} [(:item-component props) @index item]))))]]]))
