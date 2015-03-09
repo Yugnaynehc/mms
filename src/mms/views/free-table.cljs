@@ -34,35 +34,28 @@
        [:td end
         [:span.destroy {:on-click #(c/delete-section id)}]]])))
 
+(def table-view-setting-props
+  "构造空闲分区表显示控件的参数"
+  {:title "空闲分区表"
+   :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
+   :tip "添加一个新分区"
+   :col [{:id 1 :text "序号"}
+         {:id 2 :text "起始"}
+         {:id 3 :text "结束"}]
+   :values c/get-free-table 
+   :item-component table-item})
 
 (defn free-table-view
   "空闲分区表的视图定义,以表格形式展现,
-   内容暂时不可编辑。"
+  内容暂时不可编辑。"
   []
-  [:table {:class "table table-hover"}
-   [:caption "空闲分区表"
-    [:span {:class "glyphicon glyphicon-plus"
-            :id "addSection"
-            :data-toggle "tooltip"
-            :title "添加一个新分区"}]]
-   [:thead
-    [:tr
-     [:th "序号"]
-     [:th "起始"]
-     [:th "结束"]]]
-   [:tbody
-    (let [index (atom 0)]
-      (doall (for [item (vals (c/get-free-table))]
-               (do
-                 (swap! index inc)
-                 ^{:key (:id item)} [table-item @index item]))))]])
+  [t/table-component table-view-setting-props])
 
 (defn free-table-did-mount
   "当空闲分区表控件成功挂载时，
   为它添加一些jQueryUI元素"
   []
-  (.click ($ :#addSection)
-          #(reagent-modals/modal! [add-section-modal-component] {:size :sm})))
+  )
 
 (defn free-table-component
   "创建空闲分区表控件。"

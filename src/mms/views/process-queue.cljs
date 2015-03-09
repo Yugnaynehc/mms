@@ -22,7 +22,6 @@
   []
   [t/add-modal-component add-process-setting-props])
 
-
 (defn queue-item
   "进程队列的表项"
   []
@@ -34,6 +33,16 @@
        [:td life
         [:span.destroy {:on-click #(c/delete-process id)}]]])))
 
+(def process-queue-setting-props
+  "构造进程队列显示控件的参数"
+  {:title "进程队列"
+   :on-click #(reagent-modals/modal! [add-process-modal-component] {:size :sm})
+   :tip "添加进程"
+   :col [{:id 1 :text "序号"}
+         {:id 2 :text "大小"}
+         {:id 3 :text "周期"}]
+   :values c/get-process-queue 
+   :item-component queue-item})
 
 (defn process-queue-view
   "进程队列的视图，以表格形式展现。
@@ -41,23 +50,7 @@
   增加进程时，需要设定的参数有：
   进程占用内存大小，进程生命周期"
   []
-  [:table {:class "table table-hover"}
-   [:caption "进程队列"
-    [:span {:class "glyphicon glyphicon-plus"
-            :id "addProcess"
-            :data-toggle "tooltip"
-            :title "添加进程"}]]
-   [:thead
-    [:tr
-     [:th "序号"]
-     [:th "大小"]
-     [:th "生命"]]]
-   [:tbody
-    (let [index (atom 0)]
-      (doall (for [item (vals (c/get-process-queue))]
-               (do
-                 (swap! index inc)
-                 ^{:key (:id item)} [queue-item @index item]))))]])
+  [t/table-component process-queue-setting-props])
 
 (defn process-queue-did-mount
   "当进程队列控件成功挂载时，
