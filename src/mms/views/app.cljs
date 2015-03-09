@@ -2,7 +2,8 @@
   (:require
    [reagent.core :as reagent]
    [jayq.core :refer [$]]
-   [reagent-modals.modals :as reagent-modals])
+   [reagent-modals.modals :as reagent-modals]
+   [mms.algo.allocate :as allocate])
   (:use
    [mms.views.section-table :only [section-table-component]]
    [mms.views.process-queue :only [process-queue-component]]

@@ -28,3 +28,8 @@
   "删除一个进程"
   [id]
   (swap! m/process-queue dissoc id))
+
+(defn update-process-queue
+  "更新进程队列中某个进程的状态"
+  [path value]
+  (swap! m/process-queue assoc-in path value))

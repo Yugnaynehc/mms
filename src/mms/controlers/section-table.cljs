@@ -19,10 +19,6 @@
   []
   (sort-by #(:start %) (get-section-table-value)))
 
-(defn update-section-table
-  "更新分区表"
-  [])
-
 (defn add-section
   "将新产生的空闲分区加入分区表"
   [start end]
@@ -38,3 +34,16 @@
   "删除一个分区"
   [id]
   (swap! m/section-table dissoc id))
+
+(defn update-section-table
+  "更新分区表，将一个空闲分区划分出
+   一部分给新进程。"
+  [id start end require]
+  (let [boundary (dec (+ start require))
+        new-id (swap! m/section-counter inc)]
+    (swap! m/section-table assoc-in [id :end] boundary)
+    (swap! m/section-table assoc-in [id :state] false)
+    (if (< boundary end)
+      (swap! m/section-table assoc
+             new-id {:id new-id :start (inc boundary)
+                     :end end :state true}))))
