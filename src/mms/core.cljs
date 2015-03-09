@@ -2,6 +2,7 @@
     (:require
      [reagent.core :as reagent :refer [atom]]
      [reagent-modals.modals :as reagent-modals]
+     [mms.util :as util]
      [jayq.core :as jq :refer [$]]))
 
 (enable-console-print!)
@@ -15,7 +16,6 @@
 
 (defonce process-queue (atom (sorted-map)))
 (defonce process-counter (atom 0))
-
 
 (swap! free-table assoc
        1 {:id 1 :start 1 :end 100}
@@ -41,10 +41,38 @@
   需要提供的参数是内存大小：size，
   以及生命周期：life"
   [size life]
-  (if-not (or (= "" size) (= "" life))
+  (if (util/validate-string-num size life)
     (let [id (swap! process-counter inc)]
       (swap! process-queue assoc
              id {:id id :size size :life life}))))
+
+(defn add-process-modal
+  "添加进程时弹出的窗口控件，
+  用来设置新增进程的参数"
+  []
+  [:div.modal-content
+   [:div.modal-header
+    [:button {:type "button" :class "close"
+              :data-dismiss "modal" :aria-label "Close"}
+     [:span {:aria-hidden true} "×"]]
+    [:h4.modal-title "添加新进程"]]
+   [:div.modal-body
+    [:p "设置新进程的参数"]
+    [:form
+    [:div.form-group
+     [:label "进程大小:"]
+     [:input {:type "text" :class "form-control" :id "processSize"}]]
+    [:div.form-group
+     [:label "生命周期："]
+     [:input {:type "text" :class "form-control" :id "processLife"}]]]]
+   [:div.modal-footer
+    [:button {:type "button" :class "btn btn-default"
+              :data-dismiss "modal"} "关闭"]
+    [:button {:type "button" :class "btn btn-primary"
+              :on-click #(do
+                           (add-process (.-value (first ($ :#processSize)))
+                                        (.-value (first ($ :#processLife))))
+                           (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
 
 (defn delete-process
   ""
@@ -111,34 +139,6 @@
   (reagent/create-class {:render free-table-view
                          :component-did-mount free-table-did-mount}))
 
-
-(defn add-process-modal
-  "添加进程时弹出的窗口控件，
-  用来设置新增进程的参数"
-  []
-  [:div.modal-content
-   [:div.modal-header
-    [:button {:type "button" :class "close"
-              :data-dismiss "modal" :aria-label "Close"}
-     [:span {:aria-hidden true} "×"]]
-    [:h4.modal-title "添加新进程"]]
-   [:div.modal-body
-    [:p "设置新进程的参数"]
-    [:form
-    [:div.form-group
-     [:label "进程大小:"]
-     [:input {:type "text" :class "form-control" :id "processSize"}]]
-    [:div.form-group
-     [:label "生命周期："]
-     [:input {:type "text" :class "form-control" :id "processLife"}]]]]
-   [:div.modal-footer
-    [:button {:type "button" :class "btn btn-default"
-              :data-dismiss "modal"} "关闭"]
-    [:button {:type "button" :class "btn btn-primary"
-              :on-click #(do
-                           (add-process (.-value (first ($ :#processSize)))
-                                        (.-value (first ($ :#processLife))))
-                           (.modal ($ :#reagent-modal) "hide"))} "保存"]]])
 
 (defn process-queue-view
   "进程队列的视图，以表格形式展现。
