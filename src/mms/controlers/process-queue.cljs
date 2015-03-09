@@ -16,7 +16,7 @@
   (if (u/validate-string-num size life)
     (let [id (swap! m/process-counter inc)]
       (swap! m/process-queue assoc
-             id {:id id :size size :life life}))))
+             id {:id id :size size :life life :state false}))))
 
 (defn delete-process
   "删除一个进程"

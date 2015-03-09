@@ -27,11 +27,14 @@
   "空闲分区表的表项"
   []
   (let [editing (atom true)]
-    (fn [index {:keys [id start end]}]
+    (fn [index {:keys [id start end state]}]
       [:tr
        [:td index]
        [:td start]
        [:td end]
+       (if state
+         [:td.text-success "空闲"]
+         [:td.text-warning "分配"])
        [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-section id)
                         :style {:display (if @editing
@@ -47,7 +50,8 @@
    :addable false
    :col [{:id 1 :text "序号"}
          {:id 2 :text "起始"}
-         {:id 3 :text "结束"}]
+         {:id 3 :text "结束"}
+         {:id 4 :text "状态"}]
    :values c/get-section-table 
    :item-component table-item})
 

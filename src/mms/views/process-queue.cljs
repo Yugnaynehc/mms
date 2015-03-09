@@ -26,11 +26,14 @@
   "进程队列的表项"
   []
   (let [editing (atom true)]
-    (fn [index {:keys [id size life]}]
+    (fn [index {:keys [id size life state]}]
       [:tr
        [:td index]
        [:td size]
        [:td life]
+       (if state
+         [:td.text-danger {:style {:font-weight "bold"}} "运行"]
+         [:td.text-info "挂起"])
        [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-process id)
                         :style {:display (if @editing
@@ -45,7 +48,8 @@
    :addable true
    :col [{:id 1 :text "序号"}
          {:id 2 :text "大小"}
-         {:id 3 :text "周期"}]
+         {:id 3 :text "周期"}
+         {:id 4 :text "状态"}]
    :values c/get-process-queue 
    :item-component queue-item})
 
