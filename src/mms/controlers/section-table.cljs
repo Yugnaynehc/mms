@@ -25,7 +25,7 @@
   (if (u/validate-string-num start end)
     (let [id (swap! m/section-counter inc)]
       (swap! m/section-table assoc
-             id {:id id :start (js/parseInt start)
+             id {:id id :pid nil :start (js/parseInt start)
                  :end (js/parseInt end) :state true})
       (.html ($ :#model)
              (str "<h1>我现在有空间啦~~！ " (- end start) "MB哟~~</h1>")))))
@@ -38,12 +38,13 @@
 (defn update-section-table
   "更新分区表，将一个空闲分区划分出
    一部分给新进程。"
-  [id start end require]
+  [id start end pid require]
   (let [boundary (dec (+ start require))
         new-id (swap! m/section-counter inc)]
-    (swap! m/section-table assoc-in [id :end] boundary)
-    (swap! m/section-table assoc-in [id :state] false)
+    (swap! m/section-table assoc id
+           {:id id :pid pid :start start
+            :end boundary :state false})
     (if (< boundary end)
       (swap! m/section-table assoc
-             new-id {:id new-id :start (inc boundary)
+             new-id {:id new-id :pid pid :start (inc boundary)
                      :end end :state true}))))

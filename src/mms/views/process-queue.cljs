@@ -29,6 +29,7 @@
     (fn [index {:keys [id size life state]}]
       [:tr
        [:td index]
+       [:td (str "#" id)]
        [:td size]
        [:td life]
        (case  state
@@ -47,7 +48,8 @@
    :on-click #(reagent-modals/modal! [add-process-modal-component] {:size :sm})
    :tip "添加进程"
    :addable true
-   :col [{:id 1 :text "序号"}
+   :col [{:id 0 :text "序号"}
+         {:id 1 :text "标识"}
          {:id 2 :text "大小"}
          {:id 3 :text "周期"}
          {:id 4 :text "状态"}]

@@ -27,9 +27,10 @@
   "空闲分区表的表项"
   []
   (let [editing (atom true)]
-    (fn [index {:keys [id start end state]}]
+    (fn [index {:keys [id pid start end state]}]
       [:tr
        [:td index]
+       [:td (if pid (str "#" pid) "无")]
        [:td start]
        [:td end]
        (if state
@@ -48,7 +49,8 @@
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
    :tip "添加一个新分区"
    :addable false
-   :col [{:id 1 :text "序号"}
+   :col [{:id 0 :text "序号"}
+         {:id 1 :text "进程"}
          {:id 2 :text "起始"}
          {:id 3 :text "结束"}
          {:id 4 :text "状态"}]

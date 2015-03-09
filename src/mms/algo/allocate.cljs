@@ -22,7 +22,7 @@
                 require (:size process)]]
       (if (>= free require)
         (do
-          (s/update-section-table section-id start end require)
+          (s/update-section-table section-id start end process-id require)
           (p/update-process-queue [process-id :state] 2))))))
 
 (defn best-fit
