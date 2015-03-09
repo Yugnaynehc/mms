@@ -7,7 +7,6 @@
    [mms.controler.process-queue :as c]
    [mms.views.template :as t]))
 
-
 (def add-process-setting-props
   "添加新进程的表单参数"
   {:title "添加新进程"
@@ -26,14 +25,17 @@
 (defn queue-item
   "进程队列的表项"
   []
-  (let [editing (atom false)]
+  (let [editing (atom true)]
     (fn [index {:keys [id size life]}]
       [:tr
        [:td index]
        [:td size]
        [:td life]
        [:td {:style {:width "5%" :padding-left "0px"}}
-        [:span.destroy {:on-click #(c/delete-process id)}]]])))
+        [:span.destroy {:on-click #(c/delete-process id)
+                        :style {:display (if @editing
+                                           "block"
+                                           "none")}}]]])))
 
 (def process-queue-setting-props
   "构造进程队列显示控件的参数"

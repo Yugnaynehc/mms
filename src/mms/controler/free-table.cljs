@@ -5,7 +5,7 @@
    [mms.models.free-table :as m]))
 
 (defn get-free-table
-  ""
+  "返回free-table解引用后的值"
   []
   (deref m/free-table))
 

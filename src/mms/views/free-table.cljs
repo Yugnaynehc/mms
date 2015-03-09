@@ -26,14 +26,17 @@
 (defn table-item
   "空闲分区表的表项"
   []
-  (let [editing (atom false)]
+  (let [editing (atom true)]
     (fn [index {:keys [id start end]}]
       [:tr
        [:td index]
        [:td start]
        [:td end]
        [:td {:style {:width "5%" :padding-left "0px"}}
-        [:span.destroy {:on-click #(c/delete-section id)}]]])))
+        [:span.destroy {:on-click #(c/delete-section id)
+                        :style {:display (if @editing
+                                           "block"
+                                           "none")}}]]])))
 
 (def table-view-setting-props
   "构造空闲分区表显示控件的参数"
