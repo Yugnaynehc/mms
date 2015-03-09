@@ -6,7 +6,8 @@
   ""
   []
   [:div#model
-   [:h1 "这里放模型"]])
+   [:h1 "这里放模型"]
+   [:canvas#quil]])
 
 (defn memory-model-did-mount
   ""

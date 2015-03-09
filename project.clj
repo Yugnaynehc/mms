@@ -7,6 +7,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2850"]
                  [figwheel "0.2.5-SNAPSHOT"]
+                 [quil "2.2.5"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojars.frozenlock/reagent-modals "0.2.2"]
                  [jayq "2.5.4"]
