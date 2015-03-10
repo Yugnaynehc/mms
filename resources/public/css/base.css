@@ -2,6 +2,7 @@
 
 body {
     background-image: url(../img/furley_bg.png);
+    padding-top: 30px;
 }
 
 
@@ -53,5 +54,13 @@ div#model {
     height: 500px;
     margin: 0 auto;
 }
+
+div#model div {
+    min-width: 500px;
+    max-width: 800px;
+    height: 500px;
+    margin: 0 auto;
+}
+
 
     

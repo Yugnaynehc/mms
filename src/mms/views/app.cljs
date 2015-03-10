@@ -16,8 +16,10 @@
    [:div.row
     [:div.col-md-3
      [reagent-modals/modal-window]
-     [section-table-component]
-     [process-queue-component]]
+     [:div {:style {:min-height "100px"}}
+      [section-table-component]]
+     [:div
+      [process-queue-component]]]
     [:div.col-md-9
      [memory-model-component]]]])
 

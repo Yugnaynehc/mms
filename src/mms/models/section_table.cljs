@@ -14,8 +14,8 @@
 (defonce section-counter (atom 0))
 (defonce section-addable (atom true))
 
-(swap! section-table assoc
-       1 {:id 1 :pid nil :start 1 :end 100 :state false}
-       2 {:id 2 :pid nil :start 101 :end 200 :state true})
-(swap! section-counter inc)
-(swap! section-counter inc)
+;; (swap! section-table assoc
+;;        1 {:id 1 :pid nil :start 1 :end 100 :state false}
+;;        2 {:id 2 :pid nil :start 101 :end 200 :state true})
+;; (swap! section-counter inc)
+;; (swap! section-counter inc)

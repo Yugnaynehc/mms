@@ -9,12 +9,11 @@
 
 
 (def add-section-setting-props
-  "添加新分区的表单参数"
-  {:title "添加新分区"
-   :description "设置新空闲分区的参数"
-   :items [{:label "分区起始" :id "sectionStart"}
-           {:label "分区结束" :id "sectionEnd"}]
-   :create-on-click c/add-section})
+  "添加新内存的表单参数"
+  {:title "添加新内存"
+   :description "设置新内存的参数"
+   :items [{:label "内存大小" :id "sectionSize"}]
+   :create-on-click c/add-memory})
 
 (defn add-section-modal-component
   "添加分区的模态窗口控件，
@@ -47,8 +46,8 @@
   {:title "分区表"
    :button-id "freeTable"
    :on-click #(reagent-modals/modal! [add-section-modal-component] {:size :sm})
-   :tip "添加一个新分区"
-   :addable true
+   :tip "添加一块新内存"
+   :addable false
    :col [{:id 0 :text "序号"}
          {:id 1 :text "进程"}
          {:id 2 :text "起始"}

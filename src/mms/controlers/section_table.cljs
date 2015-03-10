@@ -2,33 +2,41 @@
   (:require
    [jayq.core :refer [$]]
    [mms.util :as u]
-   [mms.models.section-table :as m]))
+   [mms.models.section-table :as m]
+   [mms.controlers.memory-model :as mem]))
 
 (defn get-section-table
-  "返回section-table解引用后的值"
+  "获得section-table解引用后的值"
   []
   (deref m/section-table))
 
 (defn get-section-table-value
-  ""
+  "获得section-table键值对的值部分"
   []
   (vals (deref m/section-table)))
 
 (defn get-section-table-sorted-value
-  ""
+  "获得按照分区起始位置升序排列的分区表"
   []
   (sort-by #(:start %) (get-section-table-value)))
+
+(defn add-memory
+  "新建一块内存"
+  [size]
+  (when (u/validate-string-num size)
+   (let [id (swap! m/section-counter inc)]
+     (swap! m/section-table assoc
+            id {:id id :pid nil :start 0
+                :end (dec (js/parseInt size)) :state true}))
+   (mem/set-memory-size size)))
 
 (defn add-section
   "将新产生的空闲分区加入分区表"
   [start end]
-  (if (u/validate-string-num start end)
-    (let [id (swap! m/section-counter inc)]
-      (swap! m/section-table assoc
-             id {:id id :pid nil :start (js/parseInt start)
-                 :end (js/parseInt end) :state true})
-      (.html ($ :#model)
-             (str "<h1>我现在有空间啦~~！ " (- end start) "MB哟~~</h1>")))))
+  (let [id (swap! m/section-counter inc)]
+    (swap! m/section-table assoc
+           id {:id id :pid nil :start (js/parseInt start)
+               :end (js/parseInt end) :state true})))
 
 (defn delete-section
   "删除一个分区"
