@@ -43,6 +43,14 @@
   [id]
   (swap! m/section-table dissoc id))
 
+(defn free-section
+  "释放进程占用的内存空间"
+  [pid]
+  (let [target (first (filter #(= pid (:pid %)) (get-section-table-value)))
+        id (:id target)]
+    (swap! m/section-table assoc-in [id :pid] nil)
+    (swap! m/section-table assoc-in [id :state] true)))
+
 (defn update-section-table
   "更新分区表，将一个空闲分区划分出
    一部分给新进程。"

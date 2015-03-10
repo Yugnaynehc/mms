@@ -1,7 +1,8 @@
 (ns mms.controlers.process-queue
   (:require
    [mms.util :as u]
-   [mms.models.process-queue :as m]))
+   [mms.models.process-queue :as m]
+   [mms.controlers.section-table :as sec]))
 
 (defn get-process-queue
   "获得process-queue解引用后的值"
@@ -27,7 +28,8 @@
 (defn delete-process
   "删除一个进程"
   [id]
-  (swap! m/process-queue dissoc id))
+  (swap! m/process-queue dissoc id)
+  (sec/free-section id))
 
 (defn update-process-queue
   "更新进程队列中某个进程的状态"
