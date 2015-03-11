@@ -22,7 +22,7 @@
        ^{:key id}
        [:div.form-group
         [:label label]
-        [:input {:type "text" :value default
+        [:input {:type "text" :default-value default
                  :class "form-control" :id id}]])]]
    [:div.modal-footer
     [:button {:type "button" :class "btn btn-default"
