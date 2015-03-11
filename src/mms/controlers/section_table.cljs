@@ -70,3 +70,8 @@
       (swap! m/section-table assoc
              new-id {:id new-id :pid nil :start (inc boundary)
                      :end end :state true}))))
+
+
+(defn merge-section
+  ""
+  [])

@@ -22,7 +22,7 @@
 
 (defn first-fit
   "首次适应算法，测试版本。
-  后序需要传入进程，依据进程来调度"
+  后续需要传入进程，依据进程来调度"
   []
   (println "first-fit")
   (if-let [process (choose-initial-process)]

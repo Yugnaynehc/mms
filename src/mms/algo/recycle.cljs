@@ -1,1 +1,1 @@
-(ns mms.alog.recycle)
+(ns mms.algo.recycle)

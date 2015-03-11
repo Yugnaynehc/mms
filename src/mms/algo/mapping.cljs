@@ -1,1 +1,1 @@
-(ns mms.alog.mapping)
+(ns mms.algo.mapping)
