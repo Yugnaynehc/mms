@@ -18,11 +18,12 @@
     [:h4 (:description props)]
     [:form
      (for [item (:items props)
-           :let [{:keys [label id]} item]]
+           :let [{:keys [label id default]} item]]
        ^{:key id}
        [:div.form-group
         [:label label]
-        [:input {:type "text" :class "form-control" :id id}]])]]
+        [:input {:type "text" :value default
+                 :class "form-control" :id id}]])]]
    [:div.modal-footer
     [:button {:type "button" :class "btn btn-default"
               :data-dismiss "modal"} "关闭"]

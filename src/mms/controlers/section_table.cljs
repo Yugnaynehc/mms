@@ -39,7 +39,7 @@
            id {:id id :pid nil :start (js/parseInt start)
                :end (js/parseInt end) :state true})))
 
-(defn merge-section
+#_(defn merge-section
   "合并连续的空闲分区，
   以第一个分区为起始，第二个分区为结束"
   [first-section second-section]

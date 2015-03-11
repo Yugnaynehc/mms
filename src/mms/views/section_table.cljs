@@ -12,7 +12,7 @@
   "添加新内存的表单参数"
   {:title "添加新内存"
    :description "设置新内存的参数"
-   :items [{:label "内存大小" :id "sectionSize"}]
+   :items [{:label "内存大小" :id "sectionSize" :default 100}]
    :create-on-click c/add-memory})
 
 (defn add-section-modal-component
