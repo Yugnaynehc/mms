@@ -32,8 +32,8 @@
             sid (:id section)
             start (:start section)
             end (:end section)]
-        (s/update-section-table sid start end pid require)
-        (p/update-process-queue [pid :state] 2)))))
+        (s/consume-section sid start end pid require)
+        (p/load-process [pid :state] 2)))))
 
 (defn best-fit
   "最佳适应算法"

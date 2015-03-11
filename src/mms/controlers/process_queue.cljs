@@ -31,7 +31,8 @@
   (swap! m/process-queue dissoc id)
   (sec/free-section id))
 
-(defn update-process-queue
-  "更新进程队列中某个进程的状态"
+(defn load-process
+  "更新进程队列中某个进程的状态,
+  将进程加载到内存中"
   [path value]
   (swap! m/process-queue assoc-in path value))

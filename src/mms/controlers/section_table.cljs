@@ -57,7 +57,7 @@
       (swap! m/section-table assoc-in [id :pid] nil)
       (swap! m/section-table assoc-in [id :state] true))))
 
-(defn update-section-table
+(defn consume-section
   "更新分区表，将一个空闲分区划分出
    一部分给新进程。"
   [id start end pid require]
