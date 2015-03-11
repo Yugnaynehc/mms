@@ -1,9 +1,10 @@
 (ns mms.views.dashboard
-  {:require
-   [reagent.core :as reagent]})
+  (:require
+   [reagent.core :as reagent]
+   [mms.algo.allocate :as allo]))
 
 (defn dashboard-component
   ""
   []
-  [:div "hhhhh"])
+  [:button {:on-click allo/first-fit} "next"])
 

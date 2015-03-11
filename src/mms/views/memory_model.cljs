@@ -69,7 +69,6 @@
   ""
   []
   (if-not (= 0 (c/get-section-table-length))
-    #_(.remove ($ :.highcharts-container))
     (.highcharts ($ :#model) (get-chart-config))))
 
 #_(defn memory-model-did-update

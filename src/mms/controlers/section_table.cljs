@@ -3,7 +3,8 @@
    [jayq.core :refer [$]]
    [mms.util :as u]
    [mms.models.section-table :as m]
-   [mms.controlers.memory-model :as mem]))
+   [mms.controlers.memory-model :as mem]
+   [mms.controlers.process-queue :as pro]))
 
 (defn get-section-table
   "获得section-table解引用后的值"
@@ -39,17 +40,22 @@
                :end (js/parseInt end) :state true})))
 
 (defn delete-section
-  "删除一个分区"
+  "删除一个分区，如果分区内有进程存在，连同进程一起移除"
   [id]
-  (swap! m/section-table dissoc id))
+  (let [section (get (get-section-table) id)
+        pid (:pid section)]
+    (swap! m/section-table dissoc id)
+    (if-not (nil? pid)
+      (pro/delete-process pid))))
 
 (defn free-section
   "释放进程占用的内存空间"
   [pid]
   (let [target (first (filter #(= pid (:pid %)) (get-section-table-value)))
         id (:id target)]
-    (swap! m/section-table assoc-in [id :pid] nil)
-    (swap! m/section-table assoc-in [id :state] true)))
+    (when-not (nil? id)
+      (swap! m/section-table assoc-in [id :pid] nil)
+      (swap! m/section-table assoc-in [id :state] true))))
 
 (defn update-section-table
   "更新分区表，将一个空闲分区划分出
