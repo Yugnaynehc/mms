@@ -7,5 +7,5 @@
 (defn dashboard-component
   ""
   []
-  [:button {:on-click allo/first-fit} "next"])
+  [:button {:on-click c/allocate-memory} "next"])
 

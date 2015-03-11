@@ -39,6 +39,16 @@
            id {:id id :pid nil :start (js/parseInt start)
                :end (js/parseInt end) :state true})))
 
+(defn merge-section
+  "合并连续的空闲分区，
+  以第一个分区为起始，第二个分区为结束"
+  [first-section second-section]
+  (let [id (:id first-section)
+        start (:start first-section)
+        end (:end second-section)]
+    {:id id :pid nil :start start
+     :end end :state true}))
+
 (defn delete-section
   "删除一个分区，如果分区内有进程存在，连同进程一起移除"
   [id]
@@ -49,13 +59,47 @@
       (pro/delete-process pid))))
 
 (defn free-section
-  "释放进程占用的内存空间"
+  "释放进程占用的内存空间，
+  并且更新分区表"
   [pid]
-  (let [target (first (filter #(= pid (:pid %)) (get-section-table-value)))
-        id (:id target)]
+  (let [sorted-table (get-section-table-sorted-value)
+        [pre target aft] (first (filter
+                                 #(= pid (:pid (second %)))
+                                 (partition 3 1
+                                            (concat [nil] sorted-table [nil]))))
+        id (:id target)
+        _ (println id)
+        pre-state (:state pre)
+        aft-state (:state aft)]
     (when-not (nil? id)
-      (swap! m/section-table assoc-in [id :pid] nil)
-      (swap! m/section-table assoc-in [id :state] true))))
+      (cond
+        ;; 如果之前和之后的分区都是空闲的
+        (every? true? [pre-state aft-state])
+        (let [pre-id (:id pre)
+              aft-id (:id aft)
+              new-end (:end aft)]
+          (swap! m/section-table assoc-in [pre-id :end] new-end)
+          (swap! m/section-table dissoc id)
+          (swap! m/section-table dissoc aft-id))
+        ;; 如果之前的分区是空闲的
+        (and (true? pre-state)
+             (not= true aft-state))
+        (do 
+          (swap! m/section-table assoc-in [(:id pre) :end] (:end target))
+          (swap! m/section-table dissoc id))
+        ;; 如果之后的分区是空闲的
+        (and (not= true pre-state)
+             (true? aft-state))
+        (do
+          (swap! m/section-table assoc-in [id :end] (:end aft))
+          (swap! m/section-table assoc-in [id :pid] nil)
+          (swap! m/section-table assoc-in [id :state] true)
+          (swap! m/section-table dissoc (:id aft)))
+        ;; 前后分区都不空闲
+        :else
+        (do
+          (swap! m/section-table assoc-in [id :pid] nil)
+          (swap! m/section-table assoc-in [id :state] true))))))
 
 (defn consume-section
   "更新分区表，将一个空闲分区划分出
@@ -71,7 +115,3 @@
              new-id {:id new-id :pid nil :start (inc boundary)
                      :end end :state true}))))
 
-
-(defn merge-section
-  ""
-  [])
