@@ -126,3 +126,9 @@
               new-id {:id new-id :pid nil :start (inc boundary)
                       :end end :state true})))))
 
+
+(defn clean-section-table
+  "清空分区表"
+  []
+  (reset! m/section-counter 0)
+  (reset! m/section-table (sorted-map)))

@@ -96,3 +96,9 @@
   [id]
   (update-process-by-fn id :life dec))
 
+
+(defn clean-process-queue
+  "清空进程队列"
+  []
+  (reset! m/process-counter 0)
+  (reset! m/process-queue (sorted-map)))

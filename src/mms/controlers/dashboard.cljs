@@ -1,10 +1,11 @@
 (ns mms.controlers.dashboard
   (:require
    [mms.controlers.app :as app]
-   [mms.controlers.process-queue :as pro]))
+   [mms.controlers.process-queue :as pro]
+   [mms.controlers.section-table :as sec]))
 
 
-(defn next-state
+(defn next-model-state
   "计算下一个状态"
   []
   (let [current-pid (app/get-current-process-id)
@@ -43,7 +44,21 @@
       (app/set-current-process-id next-pid))))
 
 
-(defn generate-process
+(defn clean-model-state
+  "清除模型数据"
+  []
+  (pro/clean-process-queue)
+  (sec/clean-section-table))
+
+
+(defn generate-random-memory
+  "产生一块随机内存，大小为8的倍数"
+  [min max]
+  (let [raw (+ min (rand (- max min)))
+        size (* 8 (quot raw 8))]
+    (sec/add-memory size)))
+
+(defn generate-random-process
   "产生(0, n]个随机进程，
   每个进程的大小范围为(0, size],
   生命周期范围为(0, life]"
