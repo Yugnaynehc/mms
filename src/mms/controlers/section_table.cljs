@@ -113,8 +113,9 @@
 (defn consume-section
   "更新分区表，将一个空闲分区划分出
    一部分给新进程。"
-  [id start end pid require]
-  (let [boundary (dec (+ start require))]
+  [pid require section]
+  (let [{:keys [id start end]} section
+        boundary (dec (+ start require))]
     (swap! m/section-table assoc id
            {:id id :pid pid :start start
             :end boundary :state false})

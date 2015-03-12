@@ -26,7 +26,8 @@
   []
   (let [editing (atom true)]
     (fn [index {:keys [id size life state]}]
-      [:tr
+      [:tr (if (= id (c/get-current-process-id))
+             {:style {:background "#fff000"}})
        [:td index]
        [:td (str "#" id)]
        [:td size]
