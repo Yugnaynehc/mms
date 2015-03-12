@@ -62,5 +62,10 @@ div#model div {
     margin: 0 auto;
 }
 
-
-    
+div.center {
+    width: auto;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+}

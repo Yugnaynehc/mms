@@ -7,7 +7,7 @@
 (defn dashboard-component
   ""
   []
-  [:div {:class "btn-group"}
+  [:div {:class "btn-group center"}
    [:a {:on-click #(c/generate-random-memory 128 256)
         :class "btn btn-default"}
     "随机生成内存"]
