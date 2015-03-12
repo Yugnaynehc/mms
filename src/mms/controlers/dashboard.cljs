@@ -18,18 +18,14 @@
       ;; 要注意的是，waken-process并不会修改current-process的值，
       ;; 所以当current-process的周期为1时，就应该将其移除了
       (if (= 1 (:life current-process))
-        (do
-          ;; 将当前进程删除
-          (pro/delete-process current-pid)
-          ;; 清空当前进程记录
-          (app/clean-current-process-id))
+        ;; 将当前进程删除
+        (pro/delete-process current-pid)
         ;; 否则，将当前进程暂停
         (pro/pause-process current-pid))))
 
   (let [next-pid (app/get-next-process-id)
         next-process (pro/get-process next-pid)]
     ;; 如果存在下一个进程
-    
     (when-not (nil? next-pid)
       ;; 依据下一个进程的状态来判断操作
       (case (:state next-process)
@@ -37,8 +33,10 @@
         0 (pro/load-process next-process)
         ;; 如果下一个进程仍是自己
         1 nil
-        ;; 如果下一个进程处在挂起状态，则将其唤醒
-        2 (pro/wake-process next-pid))
+        ;; 如果下一个进程处在就绪状态，则将其唤醒
+        2 (pro/wake-process next-pid)
+        ;; 如果下一个进程处在挂起状态，则将其载入内存
+        3 (pro/load-process next-process))
       
       ;; 变更当前进程
       (app/set-current-process-id next-pid))))

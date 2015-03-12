@@ -54,7 +54,10 @@
   "删除一个进程"
   [id]
   (swap! m/process-queue dissoc id)
-  (sec/free-section id))
+  (sec/free-section id)
+  ;; 如果被删除的进程是当前运行的进程，那么清空当前进程记录
+  (if (= id (app/get-current-process-id))
+    (app/clean-current-process-id)))
 
 (defn choose-unloaded-process
   "挑选一个没有载入到内存中的进程"
@@ -86,11 +89,16 @@
 (defn load-process
   "将进程加载到内存中"
   [process]
-  (when-let [section (app/allocate-memory process)]
-    (let [{:keys [id size]} process]
-      (sec/consume-section id size section)
-      (register-process id (:id section))
-      (wake-process id))))
+  (loop [section (app/allocate-memory process)]
+    (if section
+      (let [{:keys [id size]} process]
+        (sec/consume-section id size section)
+        (register-process id (:id section))
+        (wake-process id))
+      ;; 如果分配内存失败，那么尝试置换某个进程后再试
+      (if (app/swap-out-process)
+        (recur (app/allocate-memory process))
+        (js/alert "内存不够用啦~")))))
 
 (defn pause-process
   "将进程暂停"
@@ -100,7 +108,8 @@
 (defn suspend-process
   "将进程挂起"
   [id]
-  (update-process-by-value id :state 3))
+  (update-process-by-value id :state 3)
+  (sec/free-section id))
 
 (defn weaken-process
   "减少进程的生命周期"

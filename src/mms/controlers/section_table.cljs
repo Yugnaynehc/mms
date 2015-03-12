@@ -76,7 +76,9 @@
         [pre target aft] (first (filter
                                  #(= pid (:pid (second %)))
                                  (partition 3 1
-                                            (concat [nil] sorted-table [nil]))))
+                                            (concat [nil]
+                                                    sorted-table
+                                                    [nil]))))
         id (:id target)
         pre-state (:state pre)
         aft-state (:state aft)]

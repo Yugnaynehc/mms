@@ -10,8 +10,13 @@
   [process]
   ;; 如果有空闲分区
   (if-some [section (apply @m/allocate-algo [process])]
-    section
-    (js/alert "没有空间啦~")))
+    section))
+
+(defn swap-out-process
+  "将某个进程置换出内存以此腾出空间"
+  []
+  (if-let [process (apply @m/swap-algo [])]
+    (pro/suspend-process (:id process))))
 
 
 (defn get-current-process-id
