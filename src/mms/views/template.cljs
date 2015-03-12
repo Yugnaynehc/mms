@@ -45,7 +45,6 @@
                 :on-click (:on-click props)
                 :data-toggle "tooltip"
                 :title (:tip props)}])]
-     #_[:div.panel-body]
      [:table {:class "panel table table-hover"}
       [:thead
        [:tr

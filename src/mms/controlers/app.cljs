@@ -7,15 +7,14 @@
 
 (defn allocate-memory
   "为需要内存空间的进程分配空间"
-  []
-  ;; 如果有未载入的进程
-  (if-some [process (pro/choose-unloaded-process)]
-    ;; 如果有空闲分区
-    (if-some [section (apply m/allocate-algo [process])]
-      (let [sid (:id section) start (:start section)
-            end (:end section) pid (:id process)
-            require (:size process)]
-        (sec/consume-section sid start end pid require)
-        (pro/load-process [pid :state] 2))
-      (do
-        (js/alert "没有空间啦~")))))
+  [process]
+  ;; 如果有空闲分区
+  (if-some [section (apply m/allocate-algo [process])]
+    (let [sid (:id section) start (:start section)
+          end (:end section) pid (:id process)
+          require (:size process)]
+      (sec/consume-section sid start end pid require)
+      (pro/load-process [pid :state] 2))
+    (do
+      (js/alert "没有空间啦~"))))
+

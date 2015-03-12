@@ -21,15 +21,25 @@
   []
   (sort-by #(:start %) (get-section-table-value)))
 
+(defn get-sorted-free-sections
+  "获得升序排列的空闲分区表"
+  []
+  (filter #(true? (:state %)) (get-section-table-sorted-value)))
+
 (defn add-memory
   "新建一块内存"
   [size]
-  (when (u/validate-string-num size)
-   (let [id (swap! m/section-counter inc)]
+  (let [id (swap! m/section-counter inc)]
      (swap! m/section-table assoc
             id {:id id :pid nil :start 0
                 :end (dec (js/parseInt size)) :state true}))
-   (mem/set-memory-size size)))
+  (mem/set-memory-size size))
+
+(defn input-memory
+  "依据input框的输入来构造一块内存"
+  [size]
+  (if (u/validate-string-num size)
+    (add-memory (js/parseInt size))))
 
 (defn add-section
   "将新产生的空闲分区加入分区表"
@@ -68,7 +78,6 @@
                                  (partition 3 1
                                             (concat [nil] sorted-table [nil]))))
         id (:id target)
-        _ (println id)
         pre-state (:state pre)
         aft-state (:state aft)]
     (when-not (nil? id)

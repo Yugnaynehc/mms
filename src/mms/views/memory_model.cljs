@@ -38,7 +38,8 @@
     :colorAxis {:min 0
                 :minColor "#FFFFFF"
                 :maxColor (first (.. js/Highcharts getOptions -colors))}
-    :legend {:align "right"
+    :legend {:enabled true
+             :align "right"
              :layout "vertical"
              :verticalAlign "top"
              :y 25

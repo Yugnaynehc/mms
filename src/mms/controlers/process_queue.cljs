@@ -19,11 +19,17 @@
   需要提供的参数是内存大小：size，
   以及生命周期：life"
   [size life]
-  (if (u/validate-string-num size life)
-    (let [id (swap! m/process-counter inc)]
+  (let [id (swap! m/process-counter inc)]
       (swap! m/process-queue assoc
-             id {:id id :size (js/parseInt size)
-                 :life (js/parseInt life) :state 0}))))
+             id {:id id :size size
+                 :life life :state 0})))
+
+(defn input-process
+  "根据input框的输入来构造进程"
+  [size life]
+  (if (u/validate-string-num size life)
+    (add-process (js/parseInt size)
+                 (js/parseInt life))))
 
 (defn delete-process
   "删除一个进程"

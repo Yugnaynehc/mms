@@ -7,5 +7,7 @@
 (defn dashboard-component
   ""
   []
-  [:button {:on-click c/allocate-memory} "next"])
+  [:div
+   [:button {:on-click c/next-state} "下一步"]
+   [:button {:on-click #(c/generate-process 5 20 10)} "生成随机进程"]])
 

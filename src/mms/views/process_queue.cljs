@@ -13,7 +13,7 @@
    :description "设置新进程的参数"
    :items [{:label "进程大小" :id "processSize"}
            {:label "生命周期" :id "processLife" :default 10}]
-   :create-on-click c/add-process})
+   :create-on-click c/input-process})
 
 (defn add-process-modal-component
   "添加进程的模态窗口控件，

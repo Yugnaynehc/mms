@@ -15,8 +15,8 @@
 (defonce process-addable (atom true))
 
 
-(swap! process-queue assoc
-       1 {:id 1 :size 100 :life 10 :state 0}
-       2 {:id 2 :size 200 :life 5 :state 1})
-(swap! process-counter inc)
-(swap! process-counter inc)
+;; (swap! process-queue assoc
+;;        1 {:id 1 :size 100 :life 10 :state 0}
+;;        2 {:id 2 :size 200 :life 5 :state 1})
+;; (swap! process-counter inc)
+;; (swap! process-counter inc)

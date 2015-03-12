@@ -13,7 +13,7 @@
   {:title "添加新内存"
    :description "设置新内存的参数"
    :items [{:label "内存大小" :id "sectionSize" :default 100}]
-   :create-on-click c/add-memory})
+   :create-on-click c/input-memory})
 
 (defn add-section-modal-component
   "添加分区的模态窗口控件，
@@ -33,7 +33,7 @@
        [:td start]
        [:td end]
        (if state
-         [:td.text-success "空闲"]
+         [:td.text-success {:style {:font-weight "bold"}} "空闲"]
          [:td.text-primary "分配"])
        [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-section id)
