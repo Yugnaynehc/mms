@@ -28,18 +28,19 @@
     ;; 如果存在下一个进程
     (when-not (nil? next-pid)
       ;; 依据下一个进程的状态来判断操作
+      ;; 如果操作成功执行，则变更当前进程
       (case (:state next-process)
         ;; 如果下一个进程还未载入内存中，则将其载入内存
-        0 (pro/load-process next-process)
-        ;; 如果下一个进程仍是自己
-        1 nil
+        0 (if (pro/load-process next-process)
+            (app/set-current-process-id next-pid))
+        ;; 如果下一个进程仍是自己，直接变更当前进程
+        1 (app/set-current-process-id next-pid)
         ;; 如果下一个进程处在就绪状态，则将其唤醒
-        2 (pro/wake-process next-pid)
+        2 (if (pro/wake-process next-pid)
+            (app/set-current-process-id next-pid))
         ;; 如果下一个进程处在挂起状态，则将其载入内存
-        3 (pro/load-process next-process))
-      
-      ;; 变更当前进程
-      (app/set-current-process-id next-pid))))
+        3 (if (pro/load-process next-process)
+            (app/set-current-process-id next-pid))))))
 
 
 (defn clean-model-state
