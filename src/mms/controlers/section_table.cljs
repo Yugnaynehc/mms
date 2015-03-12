@@ -105,13 +105,14 @@
   "更新分区表，将一个空闲分区划分出
    一部分给新进程。"
   [id start end pid require]
-  (let [boundary (dec (+ start require))
-        new-id (swap! m/section-counter inc)]
+  (let [boundary (dec (+ start require))]
     (swap! m/section-table assoc id
            {:id id :pid pid :start start
             :end boundary :state false})
+    ;; 如果有剩余，就会产生一个新的空闲分区
     (if (< boundary end)
-      (swap! m/section-table assoc
-             new-id {:id new-id :pid nil :start (inc boundary)
-                     :end end :state true}))))
+      (let [new-id (swap! m/section-counter inc)]
+       (swap! m/section-table assoc
+              new-id {:id new-id :pid nil :start (inc boundary)
+                      :end end :state true})))))
 
