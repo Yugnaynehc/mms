@@ -7,7 +7,10 @@
 (defn dashboard-component
   ""
   []
-  [:div
-   [:button {:on-click c/next-state} "下一步"]
-   [:button {:on-click #(c/generate-process 5 20 10)} "生成随机进程"]])
+  [:div.btn-group {:class "text-center"}
+   [:button {:on-click #(c/generate-process 5 20 10)
+             :class "btn btn-default"}
+    "生成随机进程"]
+   [:button {:on-click c/next-state :class "btn btn-default"}
+    "进程调度"]])
 
