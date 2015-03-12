@@ -38,7 +38,7 @@
   [size life]
   (let [id (swap! m/process-counter inc)]
       (swap! m/process-queue assoc
-             id {:id id :size size
+             id {:id id :sid nil :size size
                  :life life :state 0})
       (if (nil? app/get-current-process-id)
         (app/set-current-process-id id))))
@@ -73,6 +73,11 @@
   [id property func]
   (swap! m/process-queue update-in [id property] func))
 
+(defn register-process
+  "将进程所在的内存分区号记录到进程信息中"
+  [pid sid]
+  (update-process-by-value pid :sid sid))
+
 (defn wake-process
   "唤醒进程"
   [id]
@@ -84,12 +89,18 @@
   (when-let [section (app/allocate-memory process)]
     (let [{:keys [id size]} process]
       (sec/consume-section id size section)
+      (register-process id (:id section))
       (wake-process id))))
+
+(defn pause-process
+  "将进程暂停"
+  [id]
+  (update-process-by-value id :state 2))
 
 (defn suspend-process
   "将进程挂起"
   [id]
-  (update-process-by-value id :state 2))
+  (update-process-by-value id :state 3))
 
 (defn weaken-process
   "减少进程的生命周期"

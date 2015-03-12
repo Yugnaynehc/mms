@@ -22,9 +22,9 @@
           ;; 将当前进程删除
           (pro/delete-process current-pid)
           ;; 清空当前进程记录
-          (app/set-current-process-id nil))
-        ;; 否则，将当前进程挂起
-        (pro/suspend-process current-pid))))
+          (app/clean-current-process-id))
+        ;; 否则，将当前进程暂停
+        (pro/pause-process current-pid))))
 
   (let [next-pid (app/get-next-process-id)
         next-process (pro/get-process next-pid)]
@@ -48,7 +48,8 @@
   "清除模型数据"
   []
   (pro/clean-process-queue)
-  (sec/clean-section-table))
+  (sec/clean-section-table)
+  (app/clean-current-process-id))
 
 
 (defn generate-random-memory

@@ -24,6 +24,11 @@
   [pid]
   (reset! m/current-process-id pid))
 
+(defn clean-current-process-id
+  "清空当前进程记录"
+  []
+  (reset! m/current-process-id nil))
+
 (defn get-next-process-id
   "获得接下来将要执行的进程的id"
   []

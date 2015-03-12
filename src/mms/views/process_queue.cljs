@@ -35,8 +35,8 @@
        (case  state
          0 [:td.text-warning "初始"]
          1 [:td.text-danger {:style {:font-weight "bold"}} "运行"]
-         2 [:td.text-info "挂起"]
-         3 [:td.text-warning "换出"])
+         2 [:td.text-info "就绪"]
+         3 [:td.text-warning "挂起"])
        [:td {:style {:width "5%" :padding-left "0px"}}
         [:span.destroy {:on-click #(c/delete-process id)
                         :style {:display (if @editing

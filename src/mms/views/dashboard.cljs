@@ -7,7 +7,7 @@
 (defn dashboard-component
   ""
   []
-  [:div.btn-group {:class "text-center"}
+  [:div {:class "btn-group"}
    [:a {:on-click #(c/generate-random-memory 128 256)
         :class "btn btn-default"}
     "随机生成内存"]
@@ -16,6 +16,6 @@
     "随机生成进程"]
    [:a {:on-click c/next-model-state :class "btn btn-default"}
     "进程调度"]
-   [:a {:on-click c/clean-model-state :class "btn btn-default"}
+   [:a {:on-click c/clean-model-state :class "btn btn-danger"}
     "清除数据"]])
 
